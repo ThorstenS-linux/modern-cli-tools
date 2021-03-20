@@ -1,0 +1,64 @@
+- hosts: localhost
+  become: false
+  vars:
+    org: sharkdp
+    repo: fd
+    filename: x86_64-unknown-linux-gnu.tar.gz
+    version: latest
+    project_url: https://api.github.com/repos/{{ org }}/{{ repo }}/releases
+  tasks:
+
+  - name: check {{ repo }} version
+    uri:
+      url: "{{ project_url }}/{{ version }}"
+      return_content: true
+    register: latest_version
+
+  - name: check if {{ repo }}-{{ version }} already there
+    stat:
+      path: "{{ ansible_env.HOME }}/.local/bin/{{ repo }}-{{ latest_version.json.tag_name }}"
+    register: newestbinary
+
+  - name: download and link to version {{ version }}
+    block:
+      - name: create tempfile
+        tempfile:
+          state: directory
+          suffix: dwnld
+        register: tempfolder_1
+
+      - name: "installing {{ repo }} {{ latest_version.json.tag_name }}"
+        # idea from: https://stackoverflow.com/a/62672308/886659
+        loop: "{{ latest_version.json.assets }}"
+        when: "filename|string in item.name"
+        unarchive:
+          remote_src: yes
+          src: "{{ item.browser_download_url }}"
+          dest: "{{ tempfolder_1.path }}"
+          keep_newer: yes
+          extra_opts:
+          - --strip=1
+          - --no-anchored
+          - "{{ repo }}"
+
+      - name: command because no mv available
+        command: mv "{{ tempfolder_1.path }}/{{ repo }}" "{{ ansible_env.HOME }}/.local/bin/{{ repo }}-{{ latest_version.json.tag_name }}"
+        args:
+          creates: "{{ ansible_env.HOME }}/.local/bin/{{ repo }}-{{ latest_version.json.tag_name }}"
+
+      - name: "link {{ repo }}-{{ latest_version.json.tag_name }} -> {{ repo }} "
+        file:
+          src: "{{ ansible_env.HOME }}/.local/bin/{{ repo }}-{{ latest_version.json.tag_name }}"
+          dest: "{{ ansible_env.HOME }}/.local/bin/{{ repo }}"
+          state: link
+          force: yes
+    when: not newestbinary.stat.exists
+    always:
+      - name: delete {{ tempfolder_1.path|default("tempfolder") }}
+        file:
+          path: "{{ tempfolder_1.path }}"
+          state: absent
+        when: tempfolder_1.path is defined
+        ignore_errors: true
+
+# vim:ft=yaml.ansible:
