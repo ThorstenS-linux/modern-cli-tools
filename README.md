@@ -1,12 +1,17 @@
 # modern-cli-tools
-install a set of modern rust/go cli tools
+[ansible](https://github.com/ansible/ansible) helps to install a set of modern rust/go cli tools
+
+* [bat](https://github.com/sharkdb/bat)
+* [exa](https://github.com/ogham/exa)
+* [fd](https://github.com/sharkdb/fd)
+* [fzf](https://github.com/junegunn/fzf)
 
 ## Installing
 
-Just invoke ansible like this
+Just invoke ansible like this, to installi:
 
 ```bash
 ansible-playbook tool*yml
 ```
 
-Your new tools are in `~/.local/bin` - expand your `$PATH` if needed.
+Your new tools are in `~/.local/bin` - expand `$PATH` if needed.
