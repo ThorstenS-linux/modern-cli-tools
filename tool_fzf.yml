@@ -1,6 +1,7 @@
 - hosts: localhost
   become: false
   vars:
+    instpath: "{{ ansible_env.HOME }}/bin"
     org: junegunn
     repo: fzf
     filename: linux_amd64.tar.gz
@@ -16,11 +17,17 @@
 
   - name: check if {{ repo }}-{{ version }} already there
     stat:
-      path: "{{ ansible_env.HOME }}/.local/bin/{{ repo }}-{{ latest_version.json.tag_name }}"
+      path: "{{ instpath }}/{{ repo }}-{{ latest_version.json.tag_name }}"
     register: newestbinary
 
   - name: download and link to version {{ version }}
     block:
+      - name: Create a directory if it does not exist
+        file:
+          path: "{{ instpath }}"
+          state: directory
+          mode: '0755'
+
       - name: create tempfile
         tempfile:
           state: directory
@@ -42,14 +49,14 @@
           - "{{ repo }}"
 
       - name: command because no mv available
-        command: mv "{{ tempfolder_1.path }}/{{ repo }}" "{{ ansible_env.HOME }}/.local/bin/{{ repo }}-{{ latest_version.json.tag_name }}"
+        command: mv "{{ tempfolder_1.path }}/{{ repo }}" "{{ instpath }}/{{ repo }}-{{ latest_version.json.tag_name }}"
         args:
-          creates: "{{ ansible_env.HOME }}/.local/bin/{{ repo }}-{{ latest_version.json.tag_name }}"
+          creates: "{{ instpath }}/{{ repo }}-{{ latest_version.json.tag_name }}"
 
       - name: "link {{ repo }}-{{ latest_version.json.tag_name }} -> {{ repo }} "
         file:
-          src: "{{ ansible_env.HOME }}/.local/bin/{{ repo }}-{{ latest_version.json.tag_name }}"
-          dest: "{{ ansible_env.HOME }}/.local/bin/{{ repo }}"
+          src: "{{ instpath }}/{{ repo }}-{{ latest_version.json.tag_name }}"
+          dest: "{{ instpath }}/{{ repo }}"
           state: link
           force: yes
     when: not newestbinary.stat.exists
