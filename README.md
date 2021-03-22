@@ -14,7 +14,7 @@ Just invoke ansible like this, to installi:
 ansible-playbook tool*yml
 ```
 
-Your new tools are in `~/.local/bin` - expand `$PATH` if needed.
+Your new tools are in `~/bin` - expand `$PATH` if needed or change `{{ instpath }}`
 
 ## contributing
 
