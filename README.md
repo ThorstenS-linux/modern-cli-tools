@@ -19,3 +19,4 @@ Your new tools are in `~/.local/bin` - expand `$PATH` if needed.
 ## contributing
 
 If you have another great tool, please fill an issue. 👍
+
