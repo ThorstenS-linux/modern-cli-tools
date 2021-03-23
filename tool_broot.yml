@@ -1,0 +1,65 @@
+- hosts: localhost
+  become: false
+  vars:
+    instpath: "{{ ansible_env.HOME }}/bin"
+    filename: broot
+    # download from project homepage, because on github all architectures are in one zip:
+    download_url: https://dystroy.org/broot/download/x86_64-linux/
+  tasks:
+
+  - name: check {{ filename }} version
+    uri:
+      url: "{{ download_url }}/../version"
+      return_content: true
+    register: latest_version
+
+  - name: set fact of current version
+    set_fact:
+      latest_version: "{{ latest_version.content|trim }}"
+
+  - name: "check if {{ filename }}-{{ latest_version }} is already there"
+    stat:
+      path: "{{ instpath }}/{{ filename }}-{{ latest_version }}"
+    register: newestbinary
+
+  - name: download and link to version {{ version }}
+    block:
+      - name: "check if {{ instpath }} exists"
+        file:
+          path: "{{ instpath }}"
+          state: directory
+          mode: '0755'
+
+      - name: create tempdir
+        tempfile:
+          state: directory
+          suffix: dwnld
+        register: tempfolder_1
+
+      - name: "installing {{ filename }}-{{ latest_version }}"
+        get_url:
+          url: "{{ download_url }}/{{ filename }}"
+          dest: "{{ tempfolder_1.path }}/{{ filename }}"
+          mode: '0755'
+
+      - name: command because no mv available
+        command: mv "{{ tempfolder_1.path }}/{{ filename }}" "{{ instpath }}/{{ filename }}-{{ latest_version }}"
+        args:
+          creates: "{{ instpath }}/{{ filename }}-{{ latest_version }}"
+
+      - name: "link {{ filename }}-{{ latest_version }} -> {{ filename }} "
+        file:
+          src: "{{ instpath }}/{{ filename }}-{{ latest_version }}"
+          dest: "{{ instpath }}/{{ filename }}"
+          state: link
+          force: yes
+    when: not newestbinary.stat.exists
+    always:
+      - name: delete {{ tempfolder_1.path|default("tempfolder") }}
+        file:
+          path: "{{ tempfolder_1.path }}"
+          state: absent
+        when: tempfolder_1.path is defined
+        ignore_errors: true
+
+# vim:ft=yaml.ansible:

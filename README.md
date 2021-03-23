@@ -2,6 +2,7 @@
 [ansible](https://github.com/ansible/ansible) helps to install and **upgrade** a set of modern rust/go cli tools
 
 * [bat](https://github.com/sharkdb/bat)
+* [broot](https://dystroy.org/broot/)
 * [exa](https://github.com/ogham/exa)
 * [fd](https://github.com/sharkdb/fd)
 * [fzf](https://github.com/junegunn/fzf)
@@ -18,5 +19,5 @@ Your new tools are in `~/bin` - expand `$PATH` if needed or change `{{ instpath 
 
 ## contributing
 
-If you have another great tool, please fill an issue. 👍
+If you know another great tool, please fill an issue. 👍
 
