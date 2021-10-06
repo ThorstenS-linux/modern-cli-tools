@@ -1,0 +1,70 @@
+- hosts: localhost
+  become: false
+  vars:
+    instpath: "{{ ansible_env.HOME }}/bin"
+    org: restic
+    repo: restic
+    version: latest
+    #filename: "restic_{{ version }}_linux_amd64.bz2"
+    filename: "_linux_amd64.bz2"
+    project_url: https://api.github.com/repos/{{ org }}/{{ repo }}/releases
+  tasks:
+
+  - name: check {{ repo }} version
+    uri:
+      url: "{{ project_url }}/{{ version }}"
+      return_content: true
+    register: latest_version
+
+  - name: check if {{ repo }}-{{ version }} is already there
+    stat:
+      path: "{{ instpath }}/{{ repo }}-{{ latest_version.json.tag_name }}"
+    register: newestbinary
+
+  - name: download and link to version {{ version }}
+    block:
+      - name: "check if {{ instpath }} exists"
+        file:
+          path: "{{ instpath }}"
+          state: directory
+          mode: '0755'
+
+      - name: create tempdir
+        tempfile:
+          state: directory
+          suffix: dwnld
+        register: tempfolder_1
+
+      - name: "installing {{ repo }} {{ latest_version.json.tag_name }}"
+        # idea from: https://stackoverflow.com/a/62672308/886659
+        loop: "{{ latest_version.json.assets }}"
+        when: "filename|string in item.name"
+        get_url:
+          src: "{{ item.browser_download_url }}"
+          dest: "{{ tempfolder_1.path }}"
+
+      - name: "bunzip file {{ latest_version.json.tag_name }}"
+        debug:
+          msg: "{{ latest_version.json.tag_name }}"
+
+      - name: command because no mv available
+        command: mv "{{ tempfolder_1.path }}/{{ repo }}" "{{ instpath }}/{{ repo }}-{{ latest_version.json.tag_name }}"
+        args:
+          creates: "{{ instpath }}/{{ repo }}-{{ latest_version.json.tag_name }}"
+
+      - name: "link {{ repo }}-{{ latest_version.json.tag_name }} -> {{ repo }} "
+        file:
+          src: "{{ instpath }}/{{ repo }}-{{ latest_version.json.tag_name }}"
+          dest: "{{ instpath }}/{{ repo }}"
+          state: link
+          force: yes
+    when: not newestbinary.stat.exists
+    always:
+      - name: delete {{ tempfolder_1.path|default("tempfolder") }}
+        file:
+          path: "{{ tempfolder_1.path }}"
+          state: absent
+        when: tempfolder_1.path is defined
+        ignore_errors: true
+
+# vim:ft=yaml.ansible:
