@@ -40,15 +40,20 @@
         loop: "{{ latest_version.json.assets }}"
         when: "filename|string in item.name"
         get_url:
-          src: "{{ item.browser_download_url }}"
+          url: "{{ item.browser_download_url }}"
           dest: "{{ tempfolder_1.path }}"
 
       - name: "bunzip file {{ latest_version.json.tag_name }}"
         debug:
-          msg: "{{ latest_version.json.tag_name }}"
+          msg: "{{ repo }}_{{ latest_version.json.tag_name | replace ('v','') }}{{ filename }}"
+
+      - name: "bunzip2"
+        command: "bunzip2 {{ tempfolder_1.path }}/{{ repo }}_{{ latest_version.json.tag_name | replace ('v','') }}{{ filename }}"
+        args:
+          creates: "{{ tempfolder_1.path }}/{{ repo }}_{{ latest_version.json.tag_name | replace ('v','') }}{{ filename | replace ('.bz2','') }}"
 
       - name: command because no mv available
-        command: mv "{{ tempfolder_1.path }}/{{ repo }}" "{{ instpath }}/{{ repo }}-{{ latest_version.json.tag_name }}"
+        command: mv "{{ tempfolder_1.path }}/{{ repo }}_{{ latest_version.json.tag_name | replace ('v','') }}{{ filename | replace ('.bz2','') }}" "{{ instpath }}/{{ repo }}-{{ latest_version.json.tag_name }}"
         args:
           creates: "{{ instpath }}/{{ repo }}-{{ latest_version.json.tag_name }}"
 
@@ -57,6 +62,7 @@
           src: "{{ instpath }}/{{ repo }}-{{ latest_version.json.tag_name }}"
           dest: "{{ instpath }}/{{ repo }}"
           state: link
+          mode: 0775
           force: yes
     when: not newestbinary.stat.exists
     always:
