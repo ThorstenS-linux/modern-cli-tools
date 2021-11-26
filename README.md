@@ -3,6 +3,7 @@
 
 * [bat](https://github.com/sharkdp/bat)
 * [broot](https://dystroy.org/broot/)
+* [dstp](https://github.com/ycd/dstp)
 * [exa](https://github.com/ogham/exa)
 * [fd](https://github.com/sharkdb/fd)
 * [fzf](https://github.com/junegunn/fzf)
