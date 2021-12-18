@@ -10,9 +10,10 @@
 * [fd](https://github.com/sharkdp/fd) - a simple, fast and user-friendly alternative to `find`
 * [fzf](https://github.com/junegunn/fzf) - a general-purpose command-line fuzzy finder
 * [gickup](https://github.com/cooperspencer/gickup) - clone/mirror git-repositories
+* [gh](https://github.com/cli/cli) - GitHub’s official command line tool `gh`
 * [glow](https://github.com/charmbracelet/glow) - render markdown on the CLI, with pizzazz!
 * [restic](https://github.com/restic/restic) - fast, secure, efficient backup program 
-* [watchexec](https://github.com/watchexec/watchexec) - executes commands in response to file modifications 
+* [watchexec](https://github.com/watchexec/watchexec) - executes commands in response to file modifications
 
 ## installing
 
