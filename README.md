@@ -10,10 +10,11 @@
     example: `alias k='exa --long --git -s modified --icons'`
 * [fd](https://github.com/sharkdp/fd) - a simple, fast and user-friendly alternative to `find`
 * [fzf](https://github.com/junegunn/fzf) - a general-purpose command-line fuzzy finder
-* [gickup](https://github.com/cooperspencer/gickup) - clone/mirror git-repositories
 * [gh](https://github.com/cli/cli) - GitHub’s official command line tool `gh`
+* [gickup](https://github.com/cooperspencer/gickup) - clone/mirror git-repositories
 * [glow](https://github.com/charmbracelet/glow) - render markdown on the CLI, with pizzazz!
-* [restic](https://github.com/restic/restic) - fast, secure, efficient backup program 
+* [pandoc](https://github.com/jgm/pandoc) - Universal markup converter written in haskell
+* [restic](https://github.com/restic/restic) - fast, secure, efficient backup program
 * [watchexec](https://github.com/watchexec/watchexec) - executes commands in response to file modifications
 
 ## installing
@@ -39,5 +40,4 @@ For the individual options, consult the relevant project pages
 
 If you know another great tool, please fill an issue. 👍
 
-tia  
-/t
+tia /t
