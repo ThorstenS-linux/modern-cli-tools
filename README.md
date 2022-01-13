@@ -6,7 +6,8 @@
 * [bat](https://github.com/sharkdp/bat) - a ` cat`(1) clone with wings
 * [broot](https://dystroy.org/broot/) - get an overview of a directory, even a big one
 * [dstp](https://github.com/ycd/dstp) - run common networking tests against your site
-* [exa](https://github.com/ogham/exa) - a modern replacement for `ls` 
+* [exa](https://github.com/ogham/exa) - a modern replacement for `ls`  
+    example: `alias k='exa --long --git -s modified --icons'`
 * [fd](https://github.com/sharkdp/fd) - a simple, fast and user-friendly alternative to `find`
 * [fzf](https://github.com/junegunn/fzf) - a general-purpose command-line fuzzy finder
 * [gickup](https://github.com/cooperspencer/gickup) - clone/mirror git-repositories
@@ -38,4 +39,5 @@ For the individual options, consult the relevant project pages
 
 If you know another great tool, please fill an issue. 👍
 
-tia /t
+tia  
+/t
